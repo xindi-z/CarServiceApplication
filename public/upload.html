@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service - upload</title>
+</head>
+<body>
+    <a href="./list.html">list</a>
+    <a href="./query.html">query</a>
+
+    <form id = "form">
+        <label for="lname">Last name:</label><br>
+        <input type="text" id="lname" name="lname" required><br>
+
+        <label for="carMdl">Car Model:</label><br>
+        <input type="text" id="carMdl" name="carMdl" required><br>
+
+        <label for="year">Year:</label><br>
+        <input type="number" id="year" name="year" required><br>
+
+        <label for="mainDate">Maintenance Date:</label><br>
+        <input type="date" id="mainDate" name="mainDate" required><br>
+
+        <input type="submit" value="Upload">
+
+    </form>
+
+    <script>
+        const form = document.getElementById("form");
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // prevent refresh
+            const data = {
+                lname : document.getElementById("lname").value,
+                carMdl : document.getElementById("carMdl").value,
+                year : document.getElementById("year").value,
+                mainDate : document.getElementById("mainDate").value
+            }
+
+            fetch('/car', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                alert(response.message || 'uploaded');
+                document.getElementById('form').reset();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('upload failed');
+            });
+        });
+        
+
+    </script>
+
+</body>
+
+</html>

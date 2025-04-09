@@ -1,0 +1,33 @@
+version: '3.4'
+
+services:
+    
+  node:
+    restart: always
+    container_name: node_app
+    environment:
+      NODE_NUMBER: 1
+    ports:
+      - '38270:3000' #note you will need to change 2106 to your assigned port number
+    build:
+      context: .
+      dockerfile: ./Dockerfile.node
+    depends_on:
+      mongo:
+        condition: service_healthy
+        restart: true
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes: 
+      database_volume:/data/db
+
+volumes:
+  database_volume:
+
+
+    

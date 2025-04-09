@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service - list</title>
+</head>
+<body>
+    <a href="./upload.html">upload</a>
+    <a href="./query.html">query</a>
+
+    <h1>Service Infomation</h1>
+    <table border="1" id="carTable">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>Car Model</th>
+                <th>Year</th>
+                <th>Maintenance Date</th>
+            </tr>
+        </thead>
+        <tbody id = 'carTableBody'>
+        </tbody>
+    </table>
+    <script>
+        window.onload = function(){
+            fetch('/cars')
+                .then(res => res.json())
+                .then(data => {
+                const tableBody = document.getElementById('carTableBody');
+                data.forEach(car => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${car.lname}</td>
+                        <td>${car.carMdl}</td>
+                        <td>${car.year}</td>
+                        <td>${new Date(car.mainDate).toISOString().slice(0, 10)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                })
+            })
+            .catch(err => {
+                console.error('Fetch Failed：', err);
+            });
+        }
+    </script>
+
+</body>
+</html>

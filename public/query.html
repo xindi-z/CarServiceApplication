@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Service - query</title>
+</head>
+<body>
+    <a href="./upload.html">upload</a>
+    <a href="./list.html">list</a>
+    
+    <form id = "searchform">
+        <label for="startYear">Start Year:</label><br>
+        <input type="number" id="startYear" name="startYear" value="1886"><br>
+
+        <label for="endYear">End Year:</label><br>
+        <input type="number" id="endYear" name="endYear" value="2025"><br>
+
+        <label for="lname">Last Name:</label><br>
+        <input type="text" id="lname" name="lname"><br>
+
+        
+        <label for="carMdl">Car Model:</label><br>
+        <input type="text" id="carMdl" name="carMdl"><br>
+
+        <label for="mainDate">Maintenance Date:</label><br>
+        <input type="date" id="mainDate" name="mainDate"><br>
+
+        <input type="submit" value="Search">
+
+    </form>
+
+    <table border="1" id="resultTable">
+        <thead>
+            <tr>
+                <th>Last Name</th>
+                <th>Car Model</th>
+                <th>Year</th>
+                <th>Maintenance Date</th>
+            </tr>
+        </thead>
+        <tbody id = 'resultBody'>
+        </tbody>
+    </table>
+    
+    <script>
+        const form = document.getElementById("searchform");
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // prevent refresh
+            // getting the input value and trim the space
+            const start = document.getElementById("startYear").value.trim();
+            const end = document.getElementById("endYear").value.trim();
+            const lname = document.getElementById("lname").value.trim();
+            const carMdl = document.getElementById("carMdl").value.trim();
+            const mainDate = document.getElementById("mainDate").value.trim();
+
+            document.getElementById('resultBody').innerHTML = '';
+
+            if((start && !end) || (!start && end)) {
+                alert("Fill both of the start and end year")
+                return;
+            }
+
+            let query = [];
+            if(start && end){
+                query.push(`start=${start}`, `end=${end}`)
+            }
+            if(lname) query.push(`lname=${lname}`);
+            if(carMdl) query.push(`carMdl=${carMdl}`);
+            if(mainDate) query.push(`mainDate=${mainDate}`);
+
+            const queryString = query.join("&");
+            console.log("查询条件：", queryString);
+
+            fetch(`/cars?${queryString}`)
+                .then(res => res.json())
+                .then(data => {
+                const tableBody = document.getElementById('resultBody');
+                // no data found
+                if (data.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td colspan="4">No record found</td>`;
+                    tableBody.appendChild(row);
+                    return;
+                }
+                data.forEach(car => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${car.lname}</td>
+                        <td>${car.carMdl}</td>
+                        <td>${car.year}</td>
+                        <td>${new Date(car.mainDate).toISOString().slice(0, 10)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                })
+            })
+            .catch(err => {
+                console.error('Fetch Failed：', err);
+            });
+        });
+        
+
+    </script>
+</body>
+</html>
