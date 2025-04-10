@@ -6,9 +6,11 @@
     <title>Car Service - list</title>
 </head>
 <body>
+    <!-- links to other pages -->
     <a href="./upload.html">upload</a>
     <a href="./query.html">query</a>
 
+    <!-- table contains all the data -->
     <h1>Service Infomation</h1>
     <table border="1" id="carTable">
         <thead>
@@ -20,25 +22,34 @@
             </tr>
         </thead>
         <tbody id = 'carTableBody'>
+            <!-- where data return to -->
         </tbody>
     </table>
+    <!-- java script -->
     <script>
+        // when windoe loads, return all the records
         window.onload = function(){
             fetch('/cars')
                 .then(res => res.json())
+                // getting data back
                 .then(data => {
                 const tableBody = document.getElementById('carTableBody');
+                // each row of info add in to table
                 data.forEach(car => {
+                    // create tr element 
                     const row = document.createElement('tr');
+                    // toISOString returns UTC time
                     row.innerHTML = `
                         <td>${car.lname}</td>
                         <td>${car.carMdl}</td>
                         <td>${car.year}</td>
                         <td>${new Date(car.mainDate).toISOString().slice(0, 10)}</td>
                     `;
+                    // insert row into body
                     tableBody.appendChild(row);
                 })
             })
+            // error catch
             .catch(err => {
                 console.error('Fetch Failed：', err);
             });

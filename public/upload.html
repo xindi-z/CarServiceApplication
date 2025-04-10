@@ -6,9 +6,10 @@
     <title>Car Service - upload</title>
 </head>
 <body>
+    <!-- two links -->
     <a href="./list.html">list</a>
     <a href="./query.html">query</a>
-
+    <!-- form for user to fill, four field, three types -->
     <form id = "form">
         <label for="lname">Last name:</label><br>
         <input type="text" id="lname" name="lname" required><br>
@@ -23,11 +24,13 @@
         <input type="date" id="mainDate" name="mainDate" required><br>
 
         <input type="submit" value="Upload">
-
     </form>
 
+    <!-- java script -->
     <script>
+        // getting form
         const form = document.getElementById("form");
+        // when press submit, saves data
         form.addEventListener('submit', function(event) {
             event.preventDefault(); // prevent refresh
             const data = {
@@ -36,7 +39,7 @@
                 year : document.getElementById("year").value,
                 mainDate : document.getElementById("mainDate").value
             }
-
+            // a POST request, sending data as json, wait for respond back
             fetch('/car', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -44,9 +47,11 @@
             })
             .then(res => res.json())
             .then(response => {
+                // when uploded, give alert and reset the form to empty
                 alert(response.message || 'uploaded');
                 document.getElementById('form').reset();
             })
+            // error catch
             .catch(err => {
                 console.error(err);
                 alert('upload failed');

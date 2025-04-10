@@ -17,6 +17,15 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/upload.html');
   });
   
+  app.get('/upload', (req, res) => {
+    res.sendFile(__dirname + '/public/upload.html');
+  });
+  app.get('/list', (req, res) => {
+    res.sendFile(__dirname + '/public/list.html');
+  });
+  app.get('/query', (req, res) => {
+    res.sendFile(__dirname + '/public/query.html');
+  });
 
 // MongoDB Connection
 mongoose.connect('mongodb://root:example@mongo:27017/ServiceDB?authSource=admin')
@@ -46,37 +55,42 @@ app.post('/car', async (req, res) => {
     }
 });
 
+// for list and query, return the condition query result back
 app.get('/cars', async (req, res) => {
     const { start, end } = req.query;
     const query = {};
   
+    // for looking in between years
     const startYear = parseInt(start);
     const endYear = parseInt(end);
+
+    // looking for last name
     if (req.query.lname) {
         query.lname = new RegExp(req.query.lname, 'i'); // case insensitive
-      }
-      
-      if (req.query.carMdl) {
-        query.carMdl = new RegExp(req.query.carMdl, 'i');
-      }
-      
-      if (req.query.mainDate) {
-        const inputDate = new Date(req.query.mainDate);
-        const nextDate = new Date(inputDate);
-        nextDate.setDate(inputDate.getDate() + 1);
-      
-        query.mainDate = {
-          $gte: inputDate,
-          $lt: nextDate
-        };
-      }
+    }
+    // looking for model
+    if (req.query.carMdl) {
+      query.carMdl = new RegExp(req.query.carMdl, 'i');
+    }
+    
+    // looking for date
+    if (req.query.mainDate) {
+      const inputDate = new Date(req.query.mainDate);
+      const nextDate = new Date(inputDate);
+      nextDate.setDate(inputDate.getDate() + 1);
+    
+      query.mainDate = {
+        $gte: inputDate,
+        $lt: nextDate
+      };
+    }
       
       
     // if both are numbers
     if (!isNaN(startYear) && !isNaN(endYear)) {
       query.year = { $gte: startYear, $lte: endYear };
     }
-  
+    // search query in database
     try {
       const cars = await Car.find(query);
       res.json(cars);
@@ -87,6 +101,9 @@ app.get('/cars', async (req, res) => {
   });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+// app.listen(PORT, () => {
+//     console.log(`Server running at http://localhost:${PORT}`);
+// });
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });

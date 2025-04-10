@@ -1,1 +1,24 @@
+#Car Service Application
+This is a Node.js + Express + MongoDB web application for managing car maintenance records. It allows users to upload, list, and query documents in a MongoDB collection via a web interface.
+
+#Requirements:
 npm install express mongoose body-parser cors
+
+#Frontend Page Routes
+
+### `/upload`
+Form to upload a new service record
+
+### `/list`
+List all service records (via AJAX)
+
+### `/query`
+Query records based on user input (AJAX)
+
+#REST API Routes
+
+### `POST /car`
+Creates a new service record.
+
+### `GET /cars`
+Fetches all records or filtered query results.

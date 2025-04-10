@@ -6,9 +6,11 @@
     <title>Car Service - query</title>
 </head>
 <body>
+    <!-- two links -->
     <a href="./upload.html">upload</a>
     <a href="./list.html">list</a>
     
+    <!-- query form, you can look between years, lastname, car model and maintenance date-->
     <form id = "searchform">
         <label for="startYear">Start Year:</label><br>
         <input type="number" id="startYear" name="startYear" value="1886"><br>
@@ -29,7 +31,7 @@
         <input type="submit" value="Search">
 
     </form>
-
+    <!-- table that shows the info-->
     <table border="1" id="resultTable">
         <thead>
             <tr>
@@ -40,11 +42,13 @@
             </tr>
         </thead>
         <tbody id = 'resultBody'>
+            <!-- where the info returns back -->
         </tbody>
     </table>
     
     <script>
         const form = document.getElementById("searchform");
+        // when submit, seaching for the query in database with the filled option/s
         form.addEventListener('submit', function(event) {
             event.preventDefault(); // prevent refresh
             // getting the input value and trim the space
@@ -55,23 +59,26 @@
             const mainDate = document.getElementById("mainDate").value.trim();
 
             document.getElementById('resultBody').innerHTML = '';
-
+            // both start year and end year have to be filled
             if((start && !end) || (!start && end)) {
                 alert("Fill both of the start and end year")
                 return;
             }
 
             let query = [];
+            // if both start and end year exists, add in to query
             if(start && end){
                 query.push(`start=${start}`, `end=${end}`)
             }
+            // if last name / car model/ maintancen date are filled, add in to query
             if(lname) query.push(`lname=${lname}`);
             if(carMdl) query.push(`carMdl=${carMdl}`);
             if(mainDate) query.push(`mainDate=${mainDate}`);
 
+            // join all the quert with &
             const queryString = query.join("&");
-            console.log("查询条件：", queryString);
 
+            // a GET request
             fetch(`/cars?${queryString}`)
                 .then(res => res.json())
                 .then(data => {
@@ -83,17 +90,22 @@
                     tableBody.appendChild(row);
                     return;
                 }
+                // each row of info add in to table
                 data.forEach(car => {
+                    // create tr element 
                     const row = document.createElement('tr');
+                    // toISOString returns UTC time
                     row.innerHTML = `
                         <td>${car.lname}</td>
                         <td>${car.carMdl}</td>
                         <td>${car.year}</td>
                         <td>${new Date(car.mainDate).toISOString().slice(0, 10)}</td>
                     `;
+                    // insert row into body
                     tableBody.appendChild(row);
                 })
             })
+            // error catch 
             .catch(err => {
                 console.error('Fetch Failed：', err);
             });
